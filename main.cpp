@@ -16,7 +16,7 @@
 
 int main(int argc, char *argv[]) {
     Solver solver = Solver();
-    std::vector<Point> solve = solver.solve(1, -0.541325, 2, 0.1);
+    std::vector<Point> solve = solver.solve(1, -0.541325, 2.72, 0.00001);
     for (int i = 0; i < solve.size(); i++) {
         std::cout << solve[i].x << " " << solve[i].y << std::endl;
     }

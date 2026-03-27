@@ -28,16 +28,19 @@ double Solver::getNextYI(const double xI, const double yI, const double h) const
 }
 
 
-std::vector<Point> Solver::solve(double x0, double y0, double xEnd, double h) {
+std::vector<Point> Solver::solve(const double x0, const double y0, const double xEnd, const double h) const {
     double xI = x0;
     double yI = y0;
-
     std::vector<Point> points;
 
-    while (xI < xEnd) {
+    const int steps = static_cast<int>((xEnd-x0)/h);
+    points.reserve(steps + 1);
+
+    for (int i = 0; i <= steps; ++i) {
         points.push_back(Point(xI, yI)); // on first iter push (x0, y0) to vector
+
         yI = getNextYI(xI, yI, h); // get y_i+1
-        xI = xI + h; // get x_i+1
+        xI = x0 + i*h; // get x_i+1
     }
 
     return points;

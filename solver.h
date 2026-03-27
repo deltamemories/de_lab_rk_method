@@ -15,10 +15,10 @@ class Solver {
 
 public:
     Solver();
-    std::vector<Point> solve(double x0, double y0, double xEnd, double h);
+    [[nodiscard]] std::vector<Point> solve(double x0, double y0, double xEnd, double h) const;
 
 private:
-    double getNextYI(double xI, double yI, double h) const;
+    [[nodiscard]] double getNextYI(double xI, double yI, double h) const;
     bool rungeRule(); // TODO
 };
 
