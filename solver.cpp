@@ -27,6 +27,10 @@ double Solver::getNextYI(const double xI, const double yI, const double h) const
     return yIPlus1;
 }
 
+bool Solver::rungeRule(const double yIH, const double yIHDividedBy2, const double epsilon) {
+    return  1/15.0 * std::abs(yIH - yIHDividedBy2) < epsilon;
+}
+
 
 std::vector<Point> Solver::solve(const double x0, const double y0, const double xEnd, const double h) const {
     double xI = x0;

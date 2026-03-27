@@ -19,7 +19,8 @@ public:
 
 private:
     [[nodiscard]] double getNextYI(double xI, double yI, double h) const;
-    bool rungeRule(); // TODO
+
+    static bool rungeRule(double yIH, double yIHDividedBy2, double epsilon);
 };
 
 
