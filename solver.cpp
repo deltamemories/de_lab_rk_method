@@ -12,15 +12,33 @@ double testF(double x, double y) {
 }
 
 Solver::Solver() {
-    func = testF;
+    func = f;
 }
 
 
-double Solver::getNextYI(const double yI, const double xI, const double h) const {
+
+
+double Solver::getNextYI(const double xI, const double yI, const double h) const {
     const double k1 = func(xI, yI);
     const double k2 = func(xI + 0.5*h, yI + 0.5*h*k1);
     const double k3 = func(xI + 0.5*h, yI + 0.5*h*k2);
     const double k4 = func(xI + h, yI + h*k3);
     const double yIPlus1 = yI + (1/6.0)*h*(k1 + 2*k2 + 2*k3 + k4);
     return yIPlus1;
+}
+
+
+std::vector<Point> Solver::solve(double x0, double y0, double xEnd, double h) {
+    double xI = x0;
+    double yI = y0;
+
+    std::vector<Point> points;
+
+    while (xI < xEnd) {
+        points.push_back(Point(xI, yI)); // on first iter push (x0, y0) to vector
+        yI = getNextYI(xI, yI, h); // get y_i+1
+        xI = xI + h; // get x_i+1
+    }
+
+    return points;
 }

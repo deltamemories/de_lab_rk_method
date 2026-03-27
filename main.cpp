@@ -16,6 +16,8 @@
 
 int main(int argc, char *argv[]) {
     Solver solver = Solver();
-    double yIPlus1 = solver.getNextYI(2.0138, 0.7, 0.1);
-    std::cout << yIPlus1 << std::endl;
+    std::vector<Point> solve = solver.solve(1, -0.541325, 2, 0.1);
+    for (int i = 0; i < solve.size(); i++) {
+        std::cout << solve[i].x << " " << solve[i].y << std::endl;
+    }
 }
