@@ -10,17 +10,18 @@ struct Point {
 
 class Solver {
     std::function<double(double, double)> func;
-
-
+    double hMin;
+    int maxAttemptsCount;
 
 public:
     Solver();
     [[nodiscard]] std::vector<Point> solve(double x0, double y0, double xEnd, double h) const;
+    [[nodiscard]] std::vector<Point> solveWithDynamicStep(double x0, double y0, double xEnd, double h, double epsilon) const;
 
 private:
     [[nodiscard]] double getNextYI(double xI, double yI, double h) const;
 
-    static bool rungeRule(double yIH, double yIHDividedBy2, double epsilon);
+    [[nodiscard]] static bool rungeRule(double yIH, double yIHDividedBy2, double epsilon);
 };
 
 

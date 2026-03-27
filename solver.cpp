@@ -1,5 +1,8 @@
 #include "solver.h"
 #include <cmath>
+#include <iostream>
+#include <ostream>
+#include <stdexcept>
 
 // x = [1, 2]; h=0.1; y(1) = -0.541325
 
@@ -13,6 +16,8 @@ double testF(double x, double y) {
 
 Solver::Solver() {
     func = f;
+    hMin = std::numeric_limits<double>::epsilon();
+    maxAttemptsCount = 200;
 }
 
 
@@ -45,6 +50,40 @@ std::vector<Point> Solver::solve(const double x0, const double y0, const double 
 
         yI = getNextYI(xI, yI, h); // get y_i+1
         xI = x0 + i*h; // get x_i+1
+    }
+
+    return points;
+}
+
+std::vector<Point> Solver::solveWithDynamicStep(const double x0, const double y0, const double xEnd, double h, const double epsilon) const {
+    double xI = x0;
+    double yI = y0;
+    std::vector points = {Point(xI, yI)};
+
+    int errorsCount = 0;
+    while (xI < xEnd) {
+        double y = getNextYI(xI, yI, h);
+
+        double yMid = getNextYI(xI, yI, h / 2.0);
+        double yFinal = getNextYI(xI + h / 2.0, yMid, h / 2.0);
+
+        if (rungeRule(y, yFinal, epsilon)) {
+            xI += h;
+            yI = yFinal;
+            points.push_back(Point(xI, yI));
+
+            // step may be increased
+        } else {
+            h /= 2.0;
+
+            if (h < hMin) {
+                throw std::logic_error("Step is too small.");
+            }
+        }
+
+        if (xI + h > xEnd) {
+            h = xEnd - xI;
+        }
     }
 
     return points;
