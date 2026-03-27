@@ -13,7 +13,9 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(de_lab_rk_method main.cpp)
+add_executable(de_lab_rk_method main.cpp
+        solver.cpp
+        solver.h)
 target_link_libraries(de_lab_rk_method
         Qt::Core
         Qt::Gui
