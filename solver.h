@@ -21,7 +21,7 @@ public:
 private:
     [[nodiscard]] double getNextYI(double xI, double yI, double h) const;
 
-    [[nodiscard]] static bool rungeRule(double yIH, double yIHDividedBy2, double epsilon);
+    [[nodiscard]] static double rungeRule(double yIH, double yIHDividedBy2);
 };
 
 

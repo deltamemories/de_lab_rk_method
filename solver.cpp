@@ -32,8 +32,8 @@ double Solver::getNextYI(const double xI, const double yI, const double h) const
     return yIPlus1;
 }
 
-bool Solver::rungeRule(const double yIH, const double yIHDividedBy2, const double epsilon) {
-    return  1/15.0 * std::abs(yIH - yIHDividedBy2) < epsilon;
+double Solver::rungeRule(const double yIH, const double yIHDividedBy2) {
+    return  1/15.0 * std::abs(yIH - yIHDividedBy2);
 }
 
 
@@ -64,7 +64,7 @@ std::vector<Point> Solver::solveWithDynamicStep(const double x0, const double y0
         double yMid = getNextYI(xI, yI, h / 2.0);
         double yFinal = getNextYI(xI + h / 2.0, yMid, h / 2.0);
 
-        if (rungeRule(y, yFinal, epsilon)) {
+        if (rungeRule(y, yFinal) < epsilon) {
             xI += h;
             yI = yFinal;
             points.push_back(Point(xI, yI));
