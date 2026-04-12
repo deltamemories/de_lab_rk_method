@@ -37,16 +37,24 @@ double Solver::rungeRule(const double yIH, const double yIHDividedBy2) {
 }
 
 
-std::vector<Point> Solver::solve(const double x0, const double y0, const double xEnd, const double h) const {
+std::vector<Point> Solver::solve(const double x0, const double y0, const double xEnd, double h) const {
     double xI = x0;
     double yI = y0;
 
-    std::vector<Point> points;
+    std::vector<Point> points = {Point(xI, yI)};
 
     while (xI < xEnd) {
-        points.push_back(Point(xI, yI)); // on first iter push (x0, y0) to vector
+        std::cout << "xI:" << xI << std::endl;
+        if (xI+h>xEnd) {
+            h = xEnd - xI;
+        }
+
         yI = getNextYI(xI, yI, h); // get y_i+1
         xI = xI + h; // get x_i+1
+        points.push_back(Point(xI, yI));
+        std::cout << "xIn:" << xI << std::endl;
+
+        if (std::abs(xI - xEnd) < hMin) break;
     }
 
     return points;
