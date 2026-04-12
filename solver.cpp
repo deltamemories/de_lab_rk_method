@@ -18,6 +18,7 @@ Solver::Solver() {
     func = f;
     hMin = std::numeric_limits<double>::epsilon();
     maxAttemptsCount = 200;
+    accuracyGrowCoefficientForIncrementStep = 100;
 }
 
 
@@ -67,27 +68,35 @@ std::vector<Point> Solver::solveWithDynamicStep(const double x0, const double y0
 
     int errorsCount = 0;
     while (xI < xEnd) {
+        if (xI + h > xEnd) {
+            h = xEnd - xI;
+        }
+        std::cout << "H:" << h << std::endl;
+
         double y = getNextYI(xI, yI, h);
 
         double yMid = getNextYI(xI, yI, h / 2.0);
         double yFinal = getNextYI(xI + h / 2.0, yMid, h / 2.0);
 
-        if (rungeRule(y, yFinal) < epsilon) {
+        double error = rungeRule(y, yFinal);
+
+        std::cout << error-epsilon << std::endl;
+        if (error < epsilon) {
             xI += h;
             yI = yFinal;
             points.push_back(Point(xI, yI));
-
-            // step may be increased
+            std::cout << "OK" << std::endl;
+            if (error < epsilon / accuracyGrowCoefficientForIncrementStep) {
+                h *= 2.0;
+                std::cout << "+" << std::endl;
+            }
         } else {
             h /= 2.0;
+            std::cout << "-" << std::endl;
 
             if (h < hMin) {
                 throw std::logic_error("Step is too small.");
             }
-        }
-
-        if (xI + h > xEnd) {
-            h = xEnd - xI;
         }
     }
 

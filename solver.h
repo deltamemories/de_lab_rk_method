@@ -12,6 +12,7 @@ class Solver {
     std::function<double(double, double)> func;
     double hMin;
     int maxAttemptsCount;
+    double accuracyGrowCoefficientForIncrementStep;
 
 public:
     Solver();
