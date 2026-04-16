@@ -105,6 +105,7 @@ Window {
                 }
                 Button {
                     id: drawButtonEps
+
                     text: "Draw with eps"
 
                     onClicked: {
@@ -115,20 +116,34 @@ Window {
                         }
                     }
                 }
+                Button {
+                    id: drawRef
 
+                    text: "Draw ref"
 
+                    onClicked: {
+                        let dataRef = backend.getRef(parseFloat(x0.text), parseFloat(y0.text), parseFloat(xEnd.text), parseFloat(h.text));
+                        lineSeriesRef.clear();
+
+                        for (let i = 0; i < dataRef.length; i++) {
+                            lineSeriesRef.append(dataRef[i].x, dataRef[i].y);
+                        }
+                    }
+                }
                 Button {
                     id: clearGraphs
+
                     text: "clear graphs"
 
                     onClicked: {
                         scatterSeries.clear();
                         scatterSeriesEps.clear();
+                        lineSeriesRef.clear();
                     }
                 }
-
                 Button {
                     id: clearTable
+
                     text: "clear table"
 
                     onClicked: {
@@ -159,17 +174,28 @@ Window {
                     ScatterSeries {
                         id: scatterSeries
 
-                        color: "red"
+                        pointDelegate: Rectangle {
+                            color: "red"
+                            height: 12
+                            radius: width / 2
+                            width: 12
+                        }
                     }
                     ScatterSeries {
                         id: scatterSeriesEps
 
-                        color: "blue"
+                        pointDelegate: Rectangle {
+                            color: "blue"
+                            height: 12
+                            radius: width / 2
+                            width: 12
+                        }
                     }
-                    ScatterSeries {
-                        id: scatterSeriesRef
+                    LineSeries {
+                        id: lineSeriesRef
 
-                        color: "green"
+                        color: "#00ff00"
+                        width: 4
                     }
                 }
             }
