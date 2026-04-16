@@ -14,8 +14,15 @@ double testF(double x, double y) {
     return y;
 }
 
+double rf(double x) {
+    return -1*x*std::log(std::numbers::e / x - 1);
+}
+
+
+
 Solver::Solver() {
     func = f;
+    refFunc = rf;
     hMin = std::numeric_limits<double>::epsilon();
     maxAttemptsCount = 200;
     accuracyGrowCoefficientForIncrementStep = 100;
@@ -56,6 +63,38 @@ std::vector<Point> Solver::solve(const double x0, const double y0, const double 
         std::cout << "xIn:" << xI << std::endl;
 
         if (std::abs(xI - xEnd) < hMin) break;
+    }
+
+    return points;
+}
+
+std::vector<Point> Solver::getRef(double x0, double y0, double xEnd, double h) const {
+    double xI = x0;
+    double yI = y0;
+
+    std::vector<Point> points = {};
+
+    while (xI < xEnd) {
+        std::cout << "xI:" << xI << std::endl;
+        if (xI+h>xEnd) {
+            h = xEnd - xI;
+        }
+
+        yI = refFunc(xI);
+
+        points.push_back(Point(xI, yI));
+        xI = xI + h; // get x_i+1
+
+        std::cout << "xIn:" << xI << std::endl;
+
+        if (std::abs(xI - xEnd) < hMin) break;
+    }
+
+    points.push_back(Point(xI, refFunc(xI)));
+
+
+    for (int i = 0; i < points.size(); i++) {
+        std::cout << "REF " << i << " " << points[i].x << " " << points[i].y << std::endl;
     }
 
     return points;

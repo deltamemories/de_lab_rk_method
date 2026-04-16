@@ -16,117 +16,227 @@ Window {
         id: backend
 
     }
-    ColumnLayout {
+    ListModel {
+        id: tableModel
+
+    }
+    RowLayout {
         anchors.fill: parent
         anchors.margins: 10
-        spacing: 10
+        spacing: 20
 
-        RowLayout {
+        ColumnLayout {
+            Layout.fillHeight: true
             Layout.fillWidth: true
             spacing: 10
 
-            TextField {
-                id: x0
-                Layout.preferredWidth: 200
-                placeholderText: "x0"
-                text: "1"
-            }
-            TextField {
-                id: y0
-                Layout.preferredWidth: 200
-                placeholderText: "y0"
-                text: "-0.541325"
-            }
-            TextField {
-                id: xEnd
-                Layout.preferredWidth: 200
-                placeholderText: "xEnd"
-                text: "2"
-            }
-            TextField {
-                id: h
-                Layout.preferredWidth: 200
-                placeholderText: "h"
-                text: "0.1"
-            }
-            TextField {
-                id: eps
+            Flow {
+                Layout.fillWidth: true
+                spacing: 10
 
-                Layout.preferredWidth: 200
-                placeholderText: "eps"
-                text: "0.001"
-            }
-            Button {
-                id: drawButton
-                highlighted: true
-                text: "Draw"
+                TextField {
+                    id: x0
+
+                    Layout.preferredWidth: 200
+                    placeholderText: "x0"
+                    text: "1"
+                }
+                TextField {
+                    id: y0
+
+                    Layout.preferredWidth: 200
+                    placeholderText: "y0"
+                    text: "-0.541325"
+                }
+                TextField {
+                    id: xEnd
+
+                    Layout.preferredWidth: 200
+                    placeholderText: "xEnd"
+                    text: "2"
+                }
+                TextField {
+                    id: h
+
+                    Layout.preferredWidth: 200
+                    placeholderText: "h"
+                    text: "0.1"
+                }
+                TextField {
+                    id: eps
+
+                    Layout.preferredWidth: 200
+                    placeholderText: "eps"
+                    text: "0.001"
+                }
+                Button {
+                    id: drawButton
+
+                    highlighted: true
+                    text: "Draw"
+
+                    onClicked: {
+                        let data = backend.solveFromQml(parseFloat(x0.text), parseFloat(y0.text), parseFloat(xEnd.text), parseFloat(h.text));
+                        let dataRef = backend.getRef(parseFloat(x0.text), parseFloat(y0.text), parseFloat(xEnd.text), parseFloat(h.text));
+                        scatterSeries.clear();
+                        tableModel.clear();
+
+                        for (let i = 0; i < data.length; i++) {
+                            scatterSeries.append(data[i].x, data[i].y);
+                            if (i === 0) {
+                                tableModel.append({
+                                    "xI": data[i].x.toFixed(4),
+                                    "yI": data[i].y.toFixed(8),
+                                    "ref": dataRef[i].y.toFixed(8),
+                                    "diff": Math.abs(dataRef[i].y.toFixed(4) - data[i].y).toFixed(8),
+                                    "deltaY": "-"
+                                });
+                            } else {
+                                tableModel.append({
+                                    "xI": data[i].x.toFixed(4),
+                                    "yI": data[i].y.toFixed(8),
+                                    "deltaY": (Math.abs(data[i].y - data[i - 1].y)).toFixed(4),
+                                    "ref": dataRef[i].y.toFixed(8),
+                                    "diff": Math.abs(dataRef[i].y.toFixed(4) - data[i].y).toFixed(8)
+                                });
+                            }
+                        }
+                    }
+                }
+                Button {
+                    id: drawButtonEps
+                    text: "Draw with eps"
+
+                    onClicked: {
+                        let data = backend.solveFromQmlEps(parseFloat(x0.text), parseFloat(y0.text), parseFloat(xEnd.text), parseFloat(h.text), parseFloat(eps.text));
+                        scatterSeriesEps.clear();
+                        for (let i = 0; i < data.length; i++) {
+                            scatterSeriesEps.append(data[i].x, data[i].y);
+                        }
+                    }
+                }
 
 
-                onClicked: {
-                    let data = backend.solveFromQml(parseFloat(x0.text), parseFloat(y0.text), parseFloat(xEnd.text), parseFloat(h.text));
-                    scatterSeries.clear();
-                    for (let i = 0; i < data.length; i++) {
-                        scatterSeries.append(data[i].x, data[i].y);
+                Button {
+                    id: clearGraphs
+                    text: "clear graphs"
+
+                    onClicked: {
+                        scatterSeries.clear();
+                        scatterSeriesEps.clear();
+                    }
+                }
+
+                Button {
+                    id: clearTable
+                    text: "clear table"
+
+                    onClicked: {
+                        tableModel.clear();
                     }
                 }
             }
+            Item {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
 
-            Button {
-                id: drawButtonEps
-                text: "Draw with eps"
+                GraphsView {
+                    anchors.centerIn: parent
+                    height: width
+                    width: Math.min(parent.width, parent.height)
 
-                onClicked: {
-                    let data = backend.solveFromQmlEps(parseFloat(x0.text), parseFloat(y0.text), parseFloat(xEnd.text), parseFloat(h.text), parseFloat(eps.text));
-                    scatterSeriesEps.clear();
-                    for (let i = 0; i < data.length; i++) {
-                        scatterSeriesEps.append(data[i].x, data[i].y);
+                    axisX: ValueAxis {
+                        labelFormat: "%.1f"
+                        max: 5
+                        min: 0
                     }
-                }
-            }
+                    axisY: ValueAxis {
+                        labelFormat: "%.1f"
+                        max: 5
+                        min: -5
+                    }
 
-            Button {
-                id: clearGraphs
-                text: "clear"
+                    ScatterSeries {
+                        id: scatterSeries
 
-                onClicked: {
-                    scatterSeries.clear();
-                    scatterSeriesEps.clear();
+                        color: "red"
+                    }
+                    ScatterSeries {
+                        id: scatterSeriesEps
+
+                        color: "blue"
+                    }
+                    ScatterSeries {
+                        id: scatterSeriesRef
+
+                        color: "green"
+                    }
                 }
             }
         }
-
-
-        GraphsView {
+        ColumnLayout {
             Layout.fillHeight: true
-            Layout.fillWidth: true
+            Layout.preferredWidth: 500
 
-            axisX: ValueAxis {
-                labelFormat: "%.1f"
-                max: 5
-                min: 0
+            Rectangle {
+                Layout.fillWidth: true
+                color: "#eeeeee"
+                height: 30
+
+                Row {
+                    anchors.fill: parent
+
+                    Repeater {
+                        model: ["xI", "deltaY", "yI", "ref", "diff"]
+
+                        Label {
+                            horizontalAlignment: Text.AlignHCenter
+                            text: modelData
+                            width: parent.width / 5
+                        }
+                    }
+                }
             }
-            axisY: ValueAxis {
-                labelFormat: "%.1f"
-                max: 5
-                min: -5
-            }
+            ListView {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                model: tableModel
 
-            ScatterSeries {
-                id: scatterSeries
+                delegate: Rectangle {
+                    border.color: "#cccccc"
+                    height: 30
+                    width: parent.width
 
-                color: "red"
-            }
+                    Row {
+                        anchors.fill: parent
 
-            ScatterSeries {
-                id: scatterSeriesEps
-
-                color: "blue"
-            }
-
-            ScatterSeries {
-                id: scatterSeriesRef
-
-                color: "green"
+                        Label {
+                            horizontalAlignment: Text.AlignHCenter
+                            text: model.xI
+                            width: parent.width / 5
+                        }
+                        Label {
+                            horizontalAlignment: Text.AlignHCenter
+                            text: model.deltaY
+                            width: parent.width / 5
+                        }
+                        Label {
+                            horizontalAlignment: Text.AlignHCenter
+                            text: model.yI
+                            width: parent.width / 5
+                        }
+                        Label {
+                            horizontalAlignment: Text.AlignHCenter
+                            text: model.ref
+                            width: parent.width / 5
+                        }
+                        Label {
+                            horizontalAlignment: Text.AlignHCenter
+                            text: model.diff
+                            width: parent.width / 5
+                        }
+                    }
+                }
             }
         }
     }

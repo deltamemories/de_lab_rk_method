@@ -38,6 +38,16 @@ public:
         }
         return result;
     }
+
+    Q_INVOKABLE static QVariantList getRef(double x0, double y0, double xEnd, double h) {
+        const Solver solver;
+        std::vector<Point> rawPoints = solver.getRef(x0, y0, xEnd, h);
+        QVariantList result;
+        for (const Point& point : rawPoints) {
+            result.append(QPointF(point.x, point.y));
+        }
+        return result;
+    }
 };
 
 
