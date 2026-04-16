@@ -28,6 +28,16 @@ public:
 
         return result;
     }
+
+    Q_INVOKABLE static QVariantList solveFromQmlEps(double x0, double y0, double xEnd, double h, double eps) {
+        const Solver solver;
+        std::vector<Point> rawPoints = solver.solveWithDynamicStep(x0, y0, xEnd, h, eps);
+        QVariantList result;
+        for (const Point& point : rawPoints) {
+            result.append(QPointF(point.x, point.y));
+        }
+        return result;
+    }
 };
 
 
