@@ -25,10 +25,10 @@ double testRf(double x) {
 
 
 Solver::Solver() {
-    func = f;
-    // func = testF;
-    refFunc = rf;
-    // refFunc = testRf;
+    // func = f;
+    func = testF;
+    // refFunc = rf;
+    refFunc = testRf;
     hMin = std::numeric_limits<double>::epsilon();
     maxAttemptsCount = 200;
     accuracyGrowCoefficientForIncrementStep = 100;
@@ -58,7 +58,7 @@ std::vector<Point> Solver::solve(const double x0, const double y0, const double 
     std::vector<Point> points = {Point(xI, yI)};
 
     while (xI < xEnd) {
-        std::cout << "xI:" << xI << std::endl;
+        // std::cout << "xI:" << xI << std::endl;
         if (xI+h>xEnd) {
             h = xEnd - xI;
         }
@@ -66,7 +66,7 @@ std::vector<Point> Solver::solve(const double x0, const double y0, const double 
         yI = getNextYI(xI, yI, h); // get y_i+1
         xI = xI + h; // get x_i+1
         points.push_back(Point(xI, yI));
-        std::cout << "xIn:" << xI << std::endl;
+        // std::cout << "xIn:" << xI << std::endl;
 
         if (std::abs(xI - xEnd) < hMin) break;
     }
@@ -81,7 +81,7 @@ std::vector<Point> Solver::getRef(double x0, double y0, double xEnd, double h) c
     std::vector<Point> points = {};
 
     while (xI < xEnd) {
-        std::cout << "xI:" << xI << std::endl;
+        // std::cout << "xI:" << xI << std::endl;
         if (xI+h>xEnd) {
             h = xEnd - xI;
         }
@@ -91,7 +91,7 @@ std::vector<Point> Solver::getRef(double x0, double y0, double xEnd, double h) c
         points.push_back(Point(xI, yI));
         xI = xI + h; // get x_i+1
 
-        std::cout << "xIn:" << xI << std::endl;
+        // std::cout << "xIn:" << xI << std::endl;
 
         if (std::abs(xI - xEnd) < hMin) break;
     }
@@ -100,7 +100,7 @@ std::vector<Point> Solver::getRef(double x0, double y0, double xEnd, double h) c
 
 
     for (int i = 0; i < points.size(); i++) {
-        std::cout << "REF " << i << " " << points[i].x << " " << points[i].y << std::endl;
+        // std::cout << "REF " << i << " " << points[i].x << " " << points[i].y << std::endl;
     }
 
     return points;
@@ -115,7 +115,7 @@ std::vector<Point> Solver::solveWithDynamicStep(const double x0, const double y0
         if (xI + h > xEnd) {
             h = xEnd - xI;
         }
-        std::cout << "H:" << h << std::endl;
+        // std::cout << "H:" << h << std::endl;
 
         double y = getNextYI(xI, yI, h);
 
@@ -124,19 +124,19 @@ std::vector<Point> Solver::solveWithDynamicStep(const double x0, const double y0
 
         double error = rungeRule(y, yFinal);
 
-        std::cout << error-epsilon << std::endl;
+        // std::cout << error-epsilon << std::endl;
         if (error < epsilon) {
             xI += h;
             yI = yFinal;
             points.push_back(Point(xI, yI));
-            std::cout << "OK" << std::endl;
+            // std::cout << "OK" << std::endl;
             if (error < epsilon / accuracyGrowCoefficientForIncrementStep) {
                 h *= 2.0;
-                std::cout << "+" << std::endl;
+                // std::cout << "+" << std::endl;
             }
         } else {
             h /= 2.0;
-            std::cout << "-" << std::endl;
+            // std::cout << "-" << std::endl;
 
             if (h < hMin) {
                 throw std::logic_error("Step is too small.");
@@ -156,7 +156,7 @@ std::vector<PairedPoints> Solver::solverWithDynamicStepPaired(double x0, double 
         if (xI + h > xEnd) {
             h = xEnd - xI;
         }
-        std::cout << "H:" << h << std::endl;
+        // std::cout << "H:" << h << std::endl;
 
         double y = getNextYI(xI, yI, h);
 
@@ -165,20 +165,20 @@ std::vector<PairedPoints> Solver::solverWithDynamicStepPaired(double x0, double 
 
         double error = rungeRule(y, yFinal);
 
-        std::cout << error-epsilon << std::endl;
+        // std::cout << error-epsilon << std::endl;
         if (error < epsilon) {
             xI += h;
             yI = yFinal;
             const double yRef = refFunc(xI);
             pairedPoints.push_back(PairedPoints(xI, yI, yRef));
-            std::cout << "OK" << std::endl;
+            // std::cout << "OK" << std::endl;
             if (error < epsilon / accuracyGrowCoefficientForIncrementStep) {
                 h *= 2.0;
-                std::cout << "+" << std::endl;
+                // std::cout << "+" << std::endl;
             }
         } else {
             h /= 2.0;
-            std::cout << "-" << std::endl;
+            // std::cout << "-" << std::endl;
 
             if (h < hMin) {
                 throw std::logic_error("Step is too small.");
