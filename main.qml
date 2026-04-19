@@ -94,9 +94,9 @@ Window {
                         }
                     }
                 }
-
                 Button {
                     id: drawButtonEps
+
                     text: "Draw with eps"
 
                     onClicked: {
@@ -113,7 +113,7 @@ Window {
                                 "ref": data[i].yRef.toFixed(8),
                                 "diff": Math.abs(data[i].yRef - data[i].y).toExponential(4),
                                 "deltaY": i === 0 ? "-" : (Math.abs(data[i].y - data[i - 1].y)).toFixed(4)
-                            })
+                            });
                         }
                     }
                 }
@@ -157,27 +157,36 @@ Window {
                 Layout.fillWidth: true
 
                 GraphsView {
-                    theme: GraphsTheme {
-                        colorScheme: GraphsTheme.ColorScheme.Light
-                    }
+                    id: graphsView
 
                     anchors.centerIn: parent
                     height: width
                     width: Math.min(parent.width, parent.height)
 
                     axisX: ValueAxis {
+                        id: xAxis
+                        titleText: "X"
+
                         labelFormat: "%.1f"
                         max: 5
-                        min: 0
+                        min: -5
                     }
                     axisY: ValueAxis {
+                        id: yAxis
+                        titleText: "Y"
+
                         labelFormat: "%.1f"
-                        max: 20
-                        min: -3
+                        max: 5
+                        min: -5
+                    }
+                    theme: GraphsTheme {
+                        colorScheme: GraphsTheme.ColorScheme.Light
                     }
 
                     ScatterSeries {
                         id: scatterSeries
+
+                        name: "RK with fixed step"
 
                         pointDelegate: Rectangle {
                             color: "#bf0000"
@@ -188,6 +197,8 @@ Window {
                     }
                     ScatterSeries {
                         id: scatterSeriesEps
+
+                        name: "RK with eps"
 
                         pointDelegate: Rectangle {
                             color: "#0000ff"
@@ -200,7 +211,97 @@ Window {
                         id: lineSeriesRef
 
                         color: "#009600"
+                        name: "reference"
                         width: 2
+                    }
+                    LineSeries {
+                        color: "#000000"
+                        width: 5
+
+                        XYPoint {
+                            x: -1
+                            y: 0
+                        }
+                        XYPoint {
+                            x: 1
+                            y: 0
+                        }
+                    }
+                    LineSeries {
+                        color: "#000000"
+                        width: 5
+
+                        XYPoint {
+                            x: 0
+                            y: -1
+                        }
+                        XYPoint {
+                            x: 0
+                            y: 1
+                        }
+                    }
+                    TapHandler {
+                        onTapped: console.log("Graph clicked at coordinates:", point.position)
+                    }
+                    WheelHandler {
+                        id: wheelHandler
+
+                        target: null
+
+                        onWheel: event => {
+                            let zoomFactor = event.angleDelta.y > 0 ? 0.9 : 1.1;
+
+                            let xRange = xAxis.max - xAxis.min;
+                            let yRange = yAxis.max - yAxis.min;
+                            let xCenter = (xAxis.max + xAxis.min) / 2;
+                            let yCenter = (yAxis.max + yAxis.min) / 2;
+
+                            xAxis.min = xCenter - (xRange * zoomFactor) / 2;
+                            xAxis.max = xCenter + (xRange * zoomFactor) / 2;
+                            yAxis.min = yCenter - (yRange * zoomFactor) / 2;
+                            yAxis.max = yCenter + (yRange * zoomFactor) / 2;
+                        }
+                    }
+
+                    DragHandler {
+                        id: dragHandler
+
+                        property real startMaxX: 0
+                        property real startMaxY: 0
+
+                        property real startMinX: 0
+                        property real startMinY: 0
+
+                        acceptedButtons: Qt.LeftButton
+                        target: null
+
+                        onActiveChanged: {
+                            if (active) {
+                                startMinX = xAxis.min;
+                                startMaxX = xAxis.max;
+                                startMinY = yAxis.min;
+                                startMaxY = yAxis.max;
+                            }
+                        }
+                        onCentroidChanged: {
+                            if (!active)
+                                return;
+
+                            let totalDxPixels = centroid.position.x - centroid.pressPosition.x;
+                            let totalDyPixels = centroid.position.y - centroid.pressPosition.y;
+
+                            let xFactor = (startMaxX - startMinX) / graphsView.width;
+                            let yFactor = (startMaxY - startMinY) / graphsView.height;
+
+                            let deltaX = totalDxPixels * xFactor;
+                            let deltaY = totalDyPixels * yFactor;
+
+                            xAxis.min = startMinX - deltaX;
+                            xAxis.max = startMaxX - deltaX;
+
+                            yAxis.min = startMinY + deltaY;
+                            yAxis.max = startMaxY + deltaY;
+                        }
                     }
                 }
             }
