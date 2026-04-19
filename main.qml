@@ -76,21 +76,26 @@ Window {
                     text: "Draw"
 
                     onClicked: {
-                        let data = backend.solveFromQml(parseFloat(x0.text), parseFloat(y0.text), parseFloat(xEnd.text), parseFloat(h.text));
-                        let dataRef = backend.getRef(parseFloat(x0.text), parseFloat(y0.text), parseFloat(xEnd.text), parseFloat(h.text));
-                        scatterSeries.clear();
-                        tableModel.clear();
+                        try {
+                            let data = backend.solveFromQml(parseFloat(x0.text), parseFloat(y0.text), parseFloat(xEnd.text), parseFloat(h.text));
+                            let dataRef = backend.getRef(parseFloat(x0.text), parseFloat(y0.text), parseFloat(xEnd.text), parseFloat(h.text));
+                            scatterSeries.clear();
+                            tableModel.clear();
 
-                        for (let i = 0; i < data.length; i++) {
-                            scatterSeries.append(data[i].x, data[i].y);
+                            for (let i = 0; i < data.length; i++) {
+                                scatterSeries.append(data[i].x, data[i].y);
 
-                            tableModel.append({
-                                "xI": data[i].x.toFixed(4),
-                                "yI": data[i].y.toFixed(8),
-                                "ref": dataRef[i].y.toFixed(8),
-                                "diff": Math.abs(dataRef[i].y - data[i].y).toExponential(4),
-                                "deltaY": i === 0 ? "-" : (Math.abs(data[i].y - data[i - 1].y)).toFixed(4)
-                            });
+                                tableModel.append({
+                                    "xI": data[i].x.toFixed(4),
+                                    "yI": data[i].y.toFixed(8),
+                                    "ref": dataRef[i].y.toFixed(8),
+                                    "diff": Math.abs(dataRef[i].y - data[i].y).toExponential(4),
+                                    "deltaY": i === 0 ? "-" : (Math.abs(data[i].y - data[i - 1].y)).toFixed(4)
+                                });
+                            }
+                        } catch (err) {
+                            errorLabel.text = err.message;
+                            errorPopup.open();
                         }
                     }
                 }
@@ -100,20 +105,25 @@ Window {
                     text: "Draw with eps"
 
                     onClicked: {
-                        let data = backend.solveFromQmlEpsAndRef(parseFloat(x0.text), parseFloat(y0.text), parseFloat(xEnd.text), parseFloat(h.text), parseFloat(eps.text));
-                        scatterSeriesEps.clear();
-                        tableModel.clear();
+                        try {
+                            let data = backend.solveFromQmlEpsAndRef(parseFloat(x0.text), parseFloat(y0.text), parseFloat(xEnd.text), parseFloat(h.text), parseFloat(eps.text));
+                            scatterSeriesEps.clear();
+                            tableModel.clear();
 
-                        for (let i = 0; i < data.length; i++) {
-                            scatterSeriesEps.append(data[i].x, data[i].y);
+                            for (let i = 0; i < data.length; i++) {
+                                scatterSeriesEps.append(data[i].x, data[i].y);
 
-                            tableModel.append({
-                                "xI": data[i].x.toFixed(4),
-                                "yI": data[i].y.toFixed(8),
-                                "ref": data[i].yRef.toFixed(8),
-                                "diff": Math.abs(data[i].yRef - data[i].y).toExponential(4),
-                                "deltaY": i === 0 ? "-" : (Math.abs(data[i].y - data[i - 1].y)).toFixed(4)
-                            });
+                                tableModel.append({
+                                    "xI": data[i].x.toFixed(4),
+                                    "yI": data[i].y.toFixed(8),
+                                    "ref": data[i].yRef.toFixed(8),
+                                    "diff": Math.abs(data[i].yRef - data[i].y).toExponential(4),
+                                    "deltaY": i === 0 ? "-" : (Math.abs(data[i].y - data[i - 1].y)).toFixed(4)
+                                });
+                            }
+                        } catch (err) {
+                            errorLabel.text = err.message;
+                            errorPopup.open();
                         }
                     }
                 }
@@ -216,7 +226,7 @@ Window {
                     }
                     LineSeries {
                         color: "#000000"
-                        width: 5
+                        width: 3
 
                         XYPoint {
                             x: -1
@@ -229,7 +239,7 @@ Window {
                     }
                     LineSeries {
                         color: "#000000"
-                        width: 5
+                        width: 3
 
                         XYPoint {
                             x: 0
@@ -369,6 +379,34 @@ Window {
                         }
                     }
                 }
+            }
+        }
+    }
+    Popup {
+        id: errorPopup
+        anchors.centerIn: parent
+        width: 250
+        height: 120
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
+        background: Rectangle {
+            border.color: "#bf0000"
+            border.width: 2
+            radius: 8
+        }
+        contentItem: ColumnLayout {
+            spacing: 10
+            anchors.fill: parent
+            anchors.margins: 10
+
+            Label {
+                text: "Error"
+            }
+            Label {
+                id: errorLabel
+                text: ""
             }
         }
     }
