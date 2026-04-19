@@ -11,7 +11,7 @@ double f(double x, double y) {
 }
 
 double testF(double x, double y) {
-    return y;
+    return std::cos(x); // y
 }
 
 double rf(double x) {
@@ -19,7 +19,7 @@ double rf(double x) {
 }
 
 double testRf(double x) {
-    return std::exp(x);
+    return std::sin(x);
 }
 
 

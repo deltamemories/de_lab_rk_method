@@ -84,7 +84,6 @@ Window {
 
                             for (let i = 0; i < data.length; i++) {
                                 scatterSeries.append(data[i].x, data[i].y);
-
                                 tableModel.append({
                                     "xI": data[i].x.toFixed(4),
                                     "yI": data[i].y.toFixed(8),
@@ -112,7 +111,6 @@ Window {
 
                             for (let i = 0; i < data.length; i++) {
                                 scatterSeriesEps.append(data[i].x, data[i].y);
-
                                 tableModel.append({
                                     "xI": data[i].x.toFixed(4),
                                     "yI": data[i].y.toFixed(8),
@@ -135,7 +133,6 @@ Window {
                     onClicked: {
                         let dataRef = backend.getRef(parseFloat(x0.text), parseFloat(y0.text), parseFloat(xEnd.text), 0.01);
                         lineSeriesRef.clear();
-
                         for (let i = 0; i < dataRef.length; i++) {
                             lineSeriesRef.append(dataRef[i].x, dataRef[i].y);
                         }
@@ -169,29 +166,40 @@ Window {
                 GraphsView {
                     id: graphsView
 
+                    function updateFakeAxes() {
+                        fakeXAxis.clear();
+                        fakeXAxis.append(xAxis.min, 0);
+                        fakeXAxis.append(xAxis.max, 0);
+                        fakeYAxis.clear();
+                        fakeYAxis.append(0, yAxis.min);
+                        fakeYAxis.append(0, yAxis.max);
+                    }
+
                     anchors.centerIn: parent
                     height: width
                     width: Math.min(parent.width, parent.height)
 
                     axisX: ValueAxis {
                         id: xAxis
-                        titleText: "X"
 
                         labelFormat: "%.1f"
                         max: 5
                         min: -5
+                        titleText: "X"
                     }
                     axisY: ValueAxis {
                         id: yAxis
-                        titleText: "Y"
 
                         labelFormat: "%.1f"
                         max: 5
                         min: -5
+                        titleText: "Y"
                     }
                     theme: GraphsTheme {
                         colorScheme: GraphsTheme.ColorScheme.Light
                     }
+
+                    Component.onCompleted: updateFakeAxes()
 
                     ScatterSeries {
                         id: scatterSeries
@@ -225,30 +233,16 @@ Window {
                         width: 2
                     }
                     LineSeries {
+                        id: fakeXAxis
+
                         color: "#000000"
                         width: 3
-
-                        XYPoint {
-                            x: -1
-                            y: 0
-                        }
-                        XYPoint {
-                            x: 1
-                            y: 0
-                        }
                     }
                     LineSeries {
+                        id: fakeYAxis
+
                         color: "#000000"
                         width: 3
-
-                        XYPoint {
-                            x: 0
-                            y: -1
-                        }
-                        XYPoint {
-                            x: 0
-                            y: 1
-                        }
                     }
                     TapHandler {
                         onTapped: console.log("Graph clicked at coordinates:", point.position)
@@ -260,7 +254,6 @@ Window {
 
                         onWheel: event => {
                             let zoomFactor = event.angleDelta.y > 0 ? 0.9 : 1.1;
-
                             let xRange = xAxis.max - xAxis.min;
                             let yRange = yAxis.max - yAxis.min;
                             let xCenter = (xAxis.max + xAxis.min) / 2;
@@ -270,15 +263,15 @@ Window {
                             xAxis.max = xCenter + (xRange * zoomFactor) / 2;
                             yAxis.min = yCenter - (yRange * zoomFactor) / 2;
                             yAxis.max = yCenter + (yRange * zoomFactor) / 2;
+
+                            graphsView.updateFakeAxes();
                         }
                     }
-
                     DragHandler {
                         id: dragHandler
 
                         property real startMaxX: 0
                         property real startMaxY: 0
-
                         property real startMinX: 0
                         property real startMinY: 0
 
@@ -311,6 +304,8 @@ Window {
 
                             yAxis.min = startMinY + deltaY;
                             yAxis.max = startMaxY + deltaY;
+
+                            graphsView.updateFakeAxes();
                         }
                     }
                 }
@@ -384,12 +379,13 @@ Window {
     }
     Popup {
         id: errorPopup
+
         anchors.centerIn: parent
-        width: 250
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+        focus: true
         height: 120
         modal: true
-        focus: true
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+        width: 250
 
         background: Rectangle {
             border.color: "#bf0000"
@@ -397,9 +393,9 @@ Window {
             radius: 8
         }
         contentItem: ColumnLayout {
-            spacing: 10
             anchors.fill: parent
             anchors.margins: 10
+            spacing: 10
 
             Label {
                 text: "Error"
