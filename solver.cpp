@@ -18,11 +18,17 @@ double rf(double x) {
     return -1*x*std::log(std::numbers::e / x - 1);
 }
 
+double testRf(double x) {
+    return std::exp(x);
+}
+
 
 
 Solver::Solver() {
     func = f;
+    // func = testF;
     refFunc = rf;
+    // refFunc = testRf;
     hMin = std::numeric_limits<double>::epsilon();
     maxAttemptsCount = 200;
     accuracyGrowCoefficientForIncrementStep = 100;
@@ -105,7 +111,6 @@ std::vector<Point> Solver::solveWithDynamicStep(const double x0, const double y0
     double yI = y0;
     std::vector points = {Point(xI, yI)};
 
-    int errorsCount = 0;
     while (xI < xEnd) {
         if (xI + h > xEnd) {
             h = xEnd - xI;
@@ -140,4 +145,46 @@ std::vector<Point> Solver::solveWithDynamicStep(const double x0, const double y0
     }
 
     return points;
+}
+
+std::vector<PairedPoints> Solver::solverWithDynamicStepPaired(double x0, double y0, double xEnd, double h, double epsilon) const {
+    double xI = x0;
+    double yI = y0;
+    std::vector pairedPoints = {PairedPoints(xI, yI, yI)};
+
+    while (xI < xEnd) {
+        if (xI + h > xEnd) {
+            h = xEnd - xI;
+        }
+        std::cout << "H:" << h << std::endl;
+
+        double y = getNextYI(xI, yI, h);
+
+        double yMid = getNextYI(xI, yI, h / 2.0);
+        double yFinal = getNextYI(xI + h / 2.0, yMid, h / 2.0);
+
+        double error = rungeRule(y, yFinal);
+
+        std::cout << error-epsilon << std::endl;
+        if (error < epsilon) {
+            xI += h;
+            yI = yFinal;
+            const double yRef = refFunc(xI);
+            pairedPoints.push_back(PairedPoints(xI, yI, yRef));
+            std::cout << "OK" << std::endl;
+            if (error < epsilon / accuracyGrowCoefficientForIncrementStep) {
+                h *= 2.0;
+                std::cout << "+" << std::endl;
+            }
+        } else {
+            h /= 2.0;
+            std::cout << "-" << std::endl;
+
+            if (h < hMin) {
+                throw std::logic_error("Step is too small.");
+            }
+        }
+    }
+
+    return pairedPoints;
 }

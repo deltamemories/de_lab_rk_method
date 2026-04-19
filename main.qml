@@ -83,36 +83,37 @@ Window {
 
                         for (let i = 0; i < data.length; i++) {
                             scatterSeries.append(data[i].x, data[i].y);
-                            if (i === 0) {
-                                tableModel.append({
-                                    "xI": data[i].x.toFixed(4),
-                                    "yI": data[i].y.toFixed(8),
-                                    "ref": dataRef[i].y.toFixed(8),
-                                    "diff": Math.abs(dataRef[i].y.toFixed(4) - data[i].y).toFixed(8),
-                                    "deltaY": "-"
-                                });
-                            } else {
-                                tableModel.append({
-                                    "xI": data[i].x.toFixed(4),
-                                    "yI": data[i].y.toFixed(8),
-                                    "deltaY": (Math.abs(data[i].y - data[i - 1].y)).toFixed(4),
-                                    "ref": dataRef[i].y.toFixed(8),
-                                    "diff": Math.abs(dataRef[i].y.toFixed(4) - data[i].y).toFixed(8)
-                                });
-                            }
+
+                            tableModel.append({
+                                "xI": data[i].x.toFixed(4),
+                                "yI": data[i].y.toFixed(8),
+                                "ref": dataRef[i].y.toFixed(8),
+                                "diff": Math.abs(dataRef[i].y - data[i].y).toExponential(4),
+                                "deltaY": i === 0 ? "-" : (Math.abs(data[i].y - data[i - 1].y)).toFixed(4)
+                            });
                         }
                     }
                 }
+
                 Button {
                     id: drawButtonEps
-
                     text: "Draw with eps"
 
                     onClicked: {
-                        let data = backend.solveFromQmlEps(parseFloat(x0.text), parseFloat(y0.text), parseFloat(xEnd.text), parseFloat(h.text), parseFloat(eps.text));
+                        let data = backend.solveFromQmlEpsAndRef(parseFloat(x0.text), parseFloat(y0.text), parseFloat(xEnd.text), parseFloat(h.text), parseFloat(eps.text));
                         scatterSeriesEps.clear();
+                        tableModel.clear();
+
                         for (let i = 0; i < data.length; i++) {
                             scatterSeriesEps.append(data[i].x, data[i].y);
+
+                            tableModel.append({
+                                "xI": data[i].x.toFixed(4),
+                                "yI": data[i].y.toFixed(8),
+                                "ref": data[i].yRef.toFixed(8),
+                                "diff": Math.abs(data[i].yRef - data[i].y).toExponential(4),
+                                "deltaY": i === 0 ? "-" : (Math.abs(data[i].y - data[i - 1].y)).toFixed(4)
+                            })
                         }
                     }
                 }
@@ -122,7 +123,7 @@ Window {
                     text: "Draw ref"
 
                     onClicked: {
-                        let dataRef = backend.getRef(parseFloat(x0.text), parseFloat(y0.text), parseFloat(xEnd.text), parseFloat(h.text));
+                        let dataRef = backend.getRef(parseFloat(x0.text), parseFloat(y0.text), parseFloat(xEnd.text), 0.01);
                         lineSeriesRef.clear();
 
                         for (let i = 0; i < dataRef.length; i++) {
@@ -156,6 +157,10 @@ Window {
                 Layout.fillWidth: true
 
                 GraphsView {
+                    theme: GraphsTheme {
+                        colorScheme: GraphsTheme.ColorScheme.Light
+                    }
+
                     anchors.centerIn: parent
                     height: width
                     width: Math.min(parent.width, parent.height)
@@ -167,35 +172,35 @@ Window {
                     }
                     axisY: ValueAxis {
                         labelFormat: "%.1f"
-                        max: 5
-                        min: -5
+                        max: 20
+                        min: -3
                     }
 
                     ScatterSeries {
                         id: scatterSeries
 
                         pointDelegate: Rectangle {
-                            color: "red"
-                            height: 12
+                            color: "#bf0000"
+                            height: 6
                             radius: width / 2
-                            width: 12
+                            width: 6
                         }
                     }
                     ScatterSeries {
                         id: scatterSeriesEps
 
                         pointDelegate: Rectangle {
-                            color: "blue"
-                            height: 12
+                            color: "#0000ff"
+                            height: 6
                             radius: width / 2
-                            width: 12
+                            width: 6
                         }
                     }
                     LineSeries {
                         id: lineSeriesRef
 
-                        color: "#00ff00"
-                        width: 4
+                        color: "#009600"
+                        width: 2
                     }
                 }
             }

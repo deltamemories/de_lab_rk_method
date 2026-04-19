@@ -8,6 +8,12 @@ struct Point {
     double y;
 };
 
+struct PairedPoints {
+    double x;
+    double y;
+    double yRef;
+};
+
 class Solver {
     std::function<double(double, double)> func;
     std::function<double(double)> refFunc;
@@ -20,6 +26,7 @@ public:
     [[nodiscard]] std::vector<Point> solve(double x0, double y0, double xEnd, double h) const;
     [[nodiscard]] std::vector<Point> solveWithDynamicStep(double x0, double y0, double xEnd, double h, double epsilon) const;
     [[nodiscard]] std::vector<Point> getRef(double x0, double y0, double xEnd, double h) const;
+    [[nodiscard]] std::vector<PairedPoints> solverWithDynamicStepPaired(double x0, double y0, double xEnd, double h, double epsilon) const;
 
 private:
     [[nodiscard]] double getNextYI(double xI, double yI, double h) const;

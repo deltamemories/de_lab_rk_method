@@ -48,6 +48,20 @@ public:
         }
         return result;
     }
+
+    Q_INVOKABLE static QVariantList solveFromQmlEpsAndRef(double x0, double y0, double xEnd, double h, double eps) {
+        const Solver solver;
+        std::vector<PairedPoints> rawPoints = solver.solverWithDynamicStepPaired(x0, y0, xEnd, h, eps);
+        QVariantList result;
+        for (const PairedPoints& point : rawPoints) {
+            QVariantMap map;
+            map["x"] = point.x;
+            map["y"] = point.y;
+            map["yRef"] = point.yRef;
+            result.append(map);
+        }
+        return result;
+    }
 };
 
 
