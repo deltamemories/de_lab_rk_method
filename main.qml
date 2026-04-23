@@ -317,6 +317,7 @@ Window {
 
             Rectangle {
                 Layout.fillWidth: true
+                border.color: "#cccccc"
                 color: "#eeeeee"
                 height: 30
 
@@ -326,10 +327,23 @@ Window {
                     Repeater {
                         model: ["xI", "deltaY", "yI", "ref", "diff"]
 
-                        Label {
-                            horizontalAlignment: Text.AlignHCenter
-                            text: modelData
+                        Item {
+                            height: parent.height
                             width: parent.width / 5
+
+                            Label {
+                                anchors.fill: parent
+                                horizontalAlignment: Text.AlignHCenter
+                                text: modelData
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                            Rectangle {
+                                anchors.right: parent.right
+                                color: "#cccccc"
+                                height: parent.height
+                                visible: index < 4
+                                width: 1
+                            }
                         }
                     }
                 }
@@ -347,30 +361,84 @@ Window {
                     Row {
                         anchors.fill: parent
 
-                        Label {
-                            horizontalAlignment: Text.AlignHCenter
-                            text: model.xI
+                        Item {
+                            height: parent.height
                             width: parent.width / 5
+
+                            Label {
+                                anchors.fill: parent
+                                horizontalAlignment: Text.AlignHCenter
+                                text: model.xI
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                            Rectangle {
+                                anchors.right: parent.right
+                                color: "#cccccc"
+                                height: parent.height
+                                width: 1
+                            }
                         }
-                        Label {
-                            horizontalAlignment: Text.AlignHCenter
-                            text: model.deltaY
+                        Item {
+                            height: parent.height
                             width: parent.width / 5
+
+                            Label {
+                                anchors.fill: parent
+                                horizontalAlignment: Text.AlignHCenter
+                                text: model.deltaY
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                            Rectangle {
+                                anchors.right: parent.right
+                                color: "#cccccc"
+                                height: parent.height
+                                width: 1
+                            }
                         }
-                        Label {
-                            horizontalAlignment: Text.AlignHCenter
-                            text: model.yI
+                        Item {
+                            height: parent.height
                             width: parent.width / 5
+
+                            Label {
+                                anchors.fill: parent
+                                horizontalAlignment: Text.AlignHCenter
+                                text: model.yI
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                            Rectangle {
+                                anchors.right: parent.right
+                                color: "#cccccc"
+                                height: parent.height
+                                width: 1
+                            }
                         }
-                        Label {
-                            horizontalAlignment: Text.AlignHCenter
-                            text: model.ref
+                        Item {
+                            height: parent.height
                             width: parent.width / 5
+
+                            Label {
+                                anchors.fill: parent
+                                horizontalAlignment: Text.AlignHCenter
+                                text: model.ref
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                            Rectangle {
+                                anchors.right: parent.right
+                                color: "#cccccc"
+                                height: parent.height
+                                width: 1
+                            }
                         }
-                        Label {
-                            horizontalAlignment: Text.AlignHCenter
-                            text: model.diff
+                        Item {
+                            height: parent.height
                             width: parent.width / 5
+
+                            Label {
+                                anchors.fill: parent
+                                horizontalAlignment: Text.AlignHCenter
+                                text: model.diff
+                                verticalAlignment: Text.AlignVCenter
+                            }
                         }
                     }
                 }
@@ -402,6 +470,7 @@ Window {
             }
             Label {
                 id: errorLabel
+
                 text: ""
             }
         }
