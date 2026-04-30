@@ -11,7 +11,7 @@ double f(double x, double y) {
 }
 
 double testF(double x, double y) {
-    return std::cos(x); // y
+    return y*y-2/(x*x);
 }
 
 double rf(double x) {
@@ -19,16 +19,16 @@ double rf(double x) {
 }
 
 double testRf(double x) {
-    return std::sin(x);
+    return 1/(-2/3.0*(1/(x*x))-x/3)+1/x;
 }
 
 
 
 Solver::Solver() {
-    // func = f;
-    func = testF;
-    // refFunc = rf;
-    refFunc = testRf;
+    func = f;
+    // func = testF;
+    refFunc = rf;
+    // refFunc = testRf;
     hMin = std::numeric_limits<double>::epsilon();
     maxAttemptsCount = 200;
     accuracyGrowCoefficientForIncrementStep = 100;
