@@ -12,6 +12,9 @@ qt_add_executable(de_lab_rk_method
         main.cpp
         qcustomplot.cpp
         qcustomplot.h
+        mainwindow.cpp
+        mainwindow.h
+        mainwindow.ui
 )
 
 qt_add_qml_module(de_lab_rk_method
