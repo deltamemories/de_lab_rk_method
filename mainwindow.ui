@@ -19,19 +19,54 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
-        <widget class="QLineEdit" name="x0Edit"/>
+        <widget class="QLineEdit" name="x0Edit">
+         <property name="text">
+          <string>1</string>
+         </property>
+         <property name="placeholderText">
+          <string>x0</string>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="y0Edit"/>
+        <widget class="QLineEdit" name="y0Edit">
+         <property name="text">
+          <string>-0.541325</string>
+         </property>
+         <property name="placeholderText">
+          <string>y0</string>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="xEndEdit"/>
+        <widget class="QLineEdit" name="xEndEdit">
+         <property name="text">
+          <string>2</string>
+         </property>
+         <property name="placeholderText">
+          <string>xEnd</string>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="hEdit"/>
+        <widget class="QLineEdit" name="hEdit">
+         <property name="text">
+          <string>0.1</string>
+         </property>
+         <property name="placeholderText">
+          <string>h</string>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="epsEdit"/>
+        <widget class="QLineEdit" name="epsEdit">
+         <property name="text">
+          <string>0.00001</string>
+         </property>
+         <property name="placeholderText">
+          <string>epsilon</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QPushButton" name="solveButton">

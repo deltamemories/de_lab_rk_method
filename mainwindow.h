@@ -32,6 +32,7 @@ private:
     Ui::MainWindow *ui;
 
     void setupPlot();
+    void setupTable();
 };
 
 

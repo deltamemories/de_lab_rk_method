@@ -6,6 +6,7 @@
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
+    setupTable();
     setupPlot();
 }
 
@@ -48,6 +49,13 @@ void MainWindow::setupPlot() {
     });
 }
 
+void MainWindow::setupTable() {
+    ui->tableWidget->setColumnCount(4);
+    ui->tableWidget->setHorizontalHeaderLabels({"x", "РК4", "Аналитика", "Погрешность"});
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableWidget->verticalHeader()->setVisible(false);
+}
+
 void MainWindow::on_solveButton_clicked() {
     double x0 = ui->x0Edit->text().toDouble();
     double y0 = ui->y0Edit->text().toDouble();
@@ -73,6 +81,19 @@ void MainWindow::on_solveButton_clicked() {
         ui->plot->xAxis->setRangeLower(0);
     }
     ui->plot->replot();
+
+    ui->tableWidget->setRowCount(0);
+    for (int i = 0; i < data.size(); ++i) {
+        const auto& p = data[i];
+        double error = std::abs(p.y - p.yRef);
+
+        ui->tableWidget->insertRow(i);
+        ui->tableWidget->setItem(i, 0, new QTableWidgetItem(QString::number(p.x, 'g', 6)));
+        ui->tableWidget->setItem(i, 1, new QTableWidgetItem(QString::number(p.y, 'g', 6)));
+        ui->tableWidget->setItem(i, 2, new QTableWidgetItem(QString::number(p.yRef, 'g', 6)));
+        ui->tableWidget->setItem(i, 3, new QTableWidgetItem(QString::number(error, 'e', 3)));
+    }
+
 }
 
 void MainWindow::on_refButton_clicked() {
@@ -104,8 +125,12 @@ void MainWindow::on_refButton_clicked() {
 
 void MainWindow::on_clearButton_clicked() {
     ui->plot->graph(0)->data()->clear();
-
     ui->plot->graph(1)->data()->clear();
-
     ui->plot->replot();
+
+    ui->plot->graph(0)->data()->clear();
+    ui->plot->graph(1)->data()->clear();
+    ui->plot->replot();
+
+    ui->tableWidget->setRowCount(0);
 }
