@@ -22,7 +22,7 @@ void MainWindow::setupPlot() {
 
     ui->plot->addGraph();
     ui->plot->graph(1)->setLineStyle(QCPGraph::lsNone);
-    ui->plot->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, 5));
+    ui->plot->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, 7));
     ui->plot->graph(1)->setPen(QPen(Qt::blue));
     ui->plot->graph(1)->setName("Метод РК 4-го порядка");
 
