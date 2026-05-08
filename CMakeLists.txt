@@ -20,11 +20,8 @@ qt_add_executable(de_lab_rk_method
 qt_add_qml_module(de_lab_rk_method
     URI de_lab_rk_method
     VERSION 1.0
-    QML_FILES
-        main.qml
     SOURCES
         solver.cpp solver.h
-        solverWrapper.h
 )
 
 target_link_libraries(de_lab_rk_method PRIVATE
