@@ -17,15 +17,14 @@ MainWindow::~MainWindow() {
 
 void MainWindow::setupPlot() {
     ui->plot->addGraph();
-    ui->plot->graph(0)->setLineStyle(QCPGraph::lsNone);
-    ui->plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, 3));
-    ui->plot->graph(0)->setPen(QPen(Qt::blue));
-    ui->plot->graph(0)->setName("Метод РК 4-го порядка");
-
+    ui->plot->graph(0)->setPen(QPen(Qt::red, 3));
+    ui->plot->graph(0)->setName("Точное решение");
 
     ui->plot->addGraph();
-    ui->plot->graph(1)->setPen(QPen(Qt::red));
-    ui->plot->graph(1)->setName("Точное решение");
+    ui->plot->graph(1)->setLineStyle(QCPGraph::lsNone);
+    ui->plot->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, 5));
+    ui->plot->graph(1)->setPen(QPen(Qt::blue));
+    ui->plot->graph(1)->setName("Метод РК 4-го порядка");
 
     ui->plot->xAxis->setLabel("x");
     ui->plot->yAxis->setLabel("y");
@@ -75,8 +74,8 @@ void MainWindow::on_solveButton_clicked() {
             yRef.push_back(p.yRef);
         }
 
-        ui->plot->graph(0)->setData(x, yRK);
-        // ui->plot->graph(1)->setData(x, yRef);
+        ui->plot->graph(1)->setData(x, yRK);
+        // ui->plot->graph(0)->setData(x, yRef);
 
         ui->plot->rescaleAxes();
         if (ui->plot->xAxis->range().lower < 0) {
@@ -119,8 +118,8 @@ void MainWindow::on_refButton_clicked() {
         yRef.push_back(p.yRef);
     }
 
-    // ui->plot->graph(0)->setData(x, yRK);
-    ui->plot->graph(1)->setData(x, yRef);
+    // ui->plot->graph(1)->setData(x, yRK);
+    ui->plot->graph(0)->setData(x, yRef);
 
     ui->plot->rescaleAxes();
     if (ui->plot->xAxis->range().lower < 0) {
@@ -130,10 +129,6 @@ void MainWindow::on_refButton_clicked() {
 }
 
 void MainWindow::on_clearButton_clicked() {
-    ui->plot->graph(0)->data()->clear();
-    ui->plot->graph(1)->data()->clear();
-    ui->plot->replot();
-
     ui->plot->graph(0)->data()->clear();
     ui->plot->graph(1)->data()->clear();
     ui->plot->replot();
