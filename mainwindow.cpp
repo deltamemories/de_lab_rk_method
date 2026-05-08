@@ -51,7 +51,7 @@ void MainWindow::setupPlot() {
 
 void MainWindow::setupTable() {
     ui->tableWidget->setColumnCount(4);
-    ui->tableWidget->setHorizontalHeaderLabels({"x", "РК4", "Аналитика", "Погрешность"});
+    ui->tableWidget->setHorizontalHeaderLabels({"x", "РК4", "Точное решение", "Погрешность"});
     ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidget->verticalHeader()->setVisible(false);
 }
